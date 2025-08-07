@@ -1,0 +1,50 @@
+name: 🐞 Bug Report
+description: Report a bug
+title: "🐞 Bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Before you start, please check if someone else has already reported this issue.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 🤔 What went wrong?
+      description: Tell us what happened and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: neovim-version
+    attributes:
+      label: 📝 Neovim Version
+      description: Please paste the output of the `:version` command.
+    validations:
+      required: true
+  - type: textarea
+    id: operating-system
+    attributes:
+      label: 💻 Operating System/Version
+    validations:
+      required: true
+  - type: textarea
+    id: plugin-setup
+    attributes:
+      label: ⚙️  Plugin Setup
+      description: Share the installation and setup code you used for
+        the plugin.
+      render: lua
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 📜 Logs, Error Output & Tracebacks
+      description: If you have any logs, error messages, or tracebacks,
+        please paste them here. They’ll be automatically formatted as code.
+      render: shell
+  - type: textarea
+    id: reproduce-bug
+    attributes:
+      label: 🔄 How can we reproduce the bug?
+      description: If you know the steps to reproduce this issue, please list them.

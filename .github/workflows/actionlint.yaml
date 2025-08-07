@@ -1,0 +1,45 @@
+---
+name: Lint GitHub Actions workflows
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - .github/workflows/**
+
+permissions:
+  contents: write
+
+jobs:
+  action-lint:
+    name: Lint workflows
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache actionlint
+        id: cache-actionlint
+        uses: actions/cache@v4
+        with:
+          path: actionlint-bin
+          key: actionlint1.7.7
+
+      - name: Download actionlint
+        if: steps.cache-actionlint.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p actionlint-bin
+          base_url="https://github.com/rhysd/actionlint/releases/download/v1.7.7"
+          file="actionlint_1.7.7_linux_amd64.tar.gz"
+          url="${base_url}/${file}"
+
+          curl -sSL "$url" -o "$file"
+          tar -xzf "$file" -C actionlint-bin
+          chmod +x actionlint-bin/actionlint
+
+      - name: Run actionlint
+        run: ./actionlint-bin/actionlint

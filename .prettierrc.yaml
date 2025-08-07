@@ -1,0 +1,8 @@
+---
+# Prettier formats:
+# - Markdown (*.md)
+# - YAML (*.yaml, *.yml)
+printWidth: 100
+proseWrap: always
+useTabs: false
+tabWidth: 2
