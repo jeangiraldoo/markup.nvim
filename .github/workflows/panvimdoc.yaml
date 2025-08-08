@@ -16,7 +16,7 @@ permissions:
 jobs:
   docs:
     name: Update Vimdocs
-    if: github.repository == 'jeangiraldoo/markdown-plus.nvim'
+    if: github.repository == 'jeangiraldoo/markup.nvim'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
       - name: Generate updated vimdocs
         uses: kdheepak/panvimdoc@v4.0.1
         with:
-          vimdoc: codedocs
+          vimdoc: markup
           version: NVIM v0.10+
           toc: false
           demojify: true
