@@ -16,33 +16,39 @@
         alt="Repository size in KB"/>
 </p>
 
-Enjoy a smoother, smarter Markdown experience in Neovim with handy features that take care of the
-little things for you.
+Enjoy a smoother, smarter experience when working with markup languages, with handy features that
+take care of the little things for you.
 
 ## 📖 Table of contents
 
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Motivation](#motivation)
-- [License](#license)
+- [Features](#-features)
+- [Requirements](#-requirements)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Motivation](#-motivation)
+- [License](#-license)
 
-### <a id="features"></a>🚀 Features
+## 🚀 Features
 
-- Automatically capitalizes the first letter of headings.
-- Automatically continues lists: inserts the next bullet (`-`) in an unordered list based on the
-  previous line.
+- Supports the following markup languages:
 
-### <a id="requirements"></a>📋 Requirements
+  - Markdown
+  - Typst
+  - LaTex
+
+- Automatically:
+  - Capitalizes the first letter of headings.
+  - Continues unordered lists.
+
+## 📋 Requirements
 
 - Neovim 0.10+
 
-### <a id="installation"></a>📦 Installation
+## 📦 Installation
 
 Choose your preferred plugin manager and use the corresponding command:
 
-#### [lazy.nvim](http://www.lazyvim.org/)
+### [lazy.nvim](http://www.lazyvim.org/)
 
 ```lua
 {
@@ -67,7 +73,7 @@ use {
 }
 ```
 
-### <a id="configuration"></a> ⚙️ Configuration
+## ⚙️ Configuration
 
 Here are all the available configuration options and their defaults:
 
@@ -77,24 +83,24 @@ Here are all the available configuration options and their defaults:
 --   auto_continue_lists      → Automatically continue list entries when pressing Enter on an empty line
 
 return {
-	markdown = {
-		auto_capitalize_headings = true,
-		auto_continue_lists = true,
-	},
-	typst = {
-		auto_capitalize_headings = true,
-		auto_continue_lists = true,
-	},
-	tex = { -- Filetype used for Latex
-		auto_capitalize_headings = true,
-		auto_continue_lists = true,
-	},
+    markdown = {
+        auto_capitalize_headings = true,
+        auto_continue_lists = true,
+    },
+    typst = {
+        auto_capitalize_headings = true,
+        auto_continue_lists = true,
+    },
+    tex = { -- Filetype used for Latex
+        auto_capitalize_headings = true,
+        auto_continue_lists = true,
+    },
 }
 ```
 
-### <a id="usage"></a>💻 Usage
+## 💻 Usage
 
-#### Smart editing
+### Smart editing
 
 Just edit your Markdown file as usual — the plugin works automatically in the background.
 
@@ -103,14 +109,14 @@ Just edit your Markdown file as usual — the plugin works automatically in the 
 
 No commands or configuration are required.
 
-### <a id="motivation"></a>💡 Motivation
+## 💡 Motivation
 
 I enjoy taking notes and writing documentation in Markdown, but I’ve always wanted certain parts of
 the editing process to feel more automated, much like in a traditional word processor. I first
 created this functionality for my own Neovim setup, then decided to turn it into a plugin so others
 could enjoy it as well (o˘◡˘o)
 
-### <a id="license"></a>📜 License
+## 📜 License
 
 Markdown-plus is licensed under the MIT License. This means you are free to download, install,
 modify, share, and use the plugin for both personal and commercial purposes.
