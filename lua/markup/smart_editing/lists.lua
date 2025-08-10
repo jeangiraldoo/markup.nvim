@@ -1,19 +1,59 @@
 local last_cursor_row = nil -- Tracks the last processed line to avoid duplicate processing
 
-local function matches_pattern(pattern, line)
-	return line:match(pattern) ~= nil
-end
+local WHITESPACE_PATTERNS = {
+	LEADING = "^(%s*)",
+	ONLY = "^%s*$",
+}
 
-local PATTERNS = {
-	WHITESPACE = {
-		LEADING = "^(%s*)",
-		ONLY = "^%s*$",
-	},
-	LIST = {
-		UNFILLED_ITEM = "^%s*%-%s?$", -- "- " or "-"
-		FILLED_ITEM = "^%s*%-+%s*.+", -- "- something"
+local LIST = {
+	unfilled_pattern = "^%%s*%s%%s?$",
+	filled_pattern = "^%%s*%s%%s+[^%s].+",
+	markers = {
+		markdown = {
+			"-",
+			"*",
+			"+",
+		},
+		typst = "-",
+		tex = "\\item",
 	},
 }
+
+local filetype = vim.bo.filetype
+local markers = LIST.markers[filetype]
+if not markers then
+	return
+end
+
+local function clear_line(line)
+	vim.api.nvim_buf_set_lines(0, line, line + 1, false, { "" })
+end
+
+local function insert_list_item(list_marker, current_line, cursor_row)
+	local leading_ws = current_line:match(WHITESPACE_PATTERNS.LEADING)
+
+	local item = leading_ws .. list_marker .. " "
+	vim.api.nvim_set_current_line(item)
+	vim.api.nvim_win_set_cursor(0, { cursor_row, #item })
+end
+
+local function process_list_marker(data, marker)
+	local unfilled_item_pattern = LIST.unfilled_pattern:format(marker)
+	local is_prev_line_unfilled_item = data.prev_line:match(unfilled_item_pattern) ~= nil
+
+	if is_prev_line_unfilled_item then
+		local prev_line_row = data.cursor_row - 2
+		clear_line(prev_line_row)
+		return
+	end
+
+	local filled_item_pattern = LIST.filled_pattern:format(marker, marker)
+	local is_prev_line_filled_item = data.prev_line:match(filled_item_pattern) ~= nil
+
+	if is_prev_line_filled_item then
+		insert_list_item(marker, data.current_line, data.cursor_row)
+	end
+end
 
 local function insert_list_entry_if_needed(current_line)
 	local cursor_row = vim.api.nvim_win_get_cursor(0)[1]
@@ -21,22 +61,21 @@ local function insert_list_entry_if_needed(current_line)
 		return
 	end
 
-	if not matches_pattern(PATTERNS.WHITESPACE.ONLY, current_line) then
+	if not current_line:match(WHITESPACE_PATTERNS.ONLY) then
 		return
 	end
 
-	local prev_line = vim.api.nvim_buf_get_lines(0, cursor_row - 2, cursor_row - 1, false)[1]
-
-	-- Remove previous unfilled item and stop adding items
-	if matches_pattern(PATTERNS.LIST.UNFILLED_ITEM, prev_line) then
-		vim.api.nvim_buf_set_lines(0, cursor_row - 2, cursor_row - 1, false, { "" })
-		prev_line = ""
-	end
-
-	if matches_pattern(PATTERNS.LIST.FILLED_ITEM, prev_line) then
-		local leading_ws = current_line:match(PATTERNS.WHITESPACE.LEADING)
-		vim.api.nvim_set_current_line(leading_ws .. "- ")
-		vim.api.nvim_win_set_cursor(0, { cursor_row, #leading_ws + 2 })
+	local processal_data = {
+		prev_line = vim.api.nvim_buf_get_lines(0, cursor_row - 2, cursor_row - 1, false)[1],
+		current_line = current_line,
+		cursor_row = cursor_row,
+	}
+	if type(markers) == "string" then
+		process_list_marker(processal_data, markers)
+	else
+		for _, mark in ipairs(markers) do
+			process_list_marker(processal_data, mark)
+		end
 	end
 
 	last_cursor_row = cursor_row
