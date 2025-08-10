@@ -1,9 +1,6 @@
 name: Code formatting and linting checks
 
 on:
-  push:
-    branches: [main]
-    paths: ["**/*.lua"]
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
