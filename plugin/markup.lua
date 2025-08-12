@@ -1,3 +1,4 @@
+local config_opts = require("markup.opts")
 local smart_editing = require("markup.smart_editing")
 
 local CMDS = {
@@ -32,22 +33,28 @@ vim.api.nvim_create_user_command("Markup", function(opts)
 		return
 	end
 
+	local filetype = vim.bo.filetype
+	local filetype_opts = config_opts[filetype]
+
+	local style_data = {
+		opts = filetype_opts.style,
+		style = style,
+	}
+
 	-- If run from a visual selection, pass explicit start/end (line + col) to the style module.
 	if opts.range and opts.range > 0 then
 		local start_pos = vim.fn.getpos("'<") -- {buf, lnum, col, off}
 		local end_pos = vim.fn.getpos("'>")
 
 		-- 1-based positions
-		local range = {
+		style_data.range = {
 			start_line = start_pos[2],
 			start_col = start_pos[3],
 			end_line = end_pos[2],
 			end_col = end_pos[3],
 		}
-		require("markup.style")(style, range)
-	else
-		require("markup.style")(style)
 	end
+	require("markup.style")(style_data)
 end, {
 	nargs = "+",
 	range = true, -- allow visual selection ranges
@@ -60,14 +67,12 @@ end, {
 		end
 
 		if #args == 0 then
-			-- return { "style", "preview" }
 			return standalone_cmd_names
 		end
 
 		if #args == 1 then
 			return vim.tbl_filter(function(c)
 				return c:find("^" .. args[1])
-				-- end, { "style", "preview" })
 			end, standalone_cmd_names)
 		end
 	end,
@@ -80,7 +85,10 @@ vim.api.nvim_create_autocmd("TextChangedI", {
 		"*.tex",
 	},
 	callback = function()
-		smart_editing.start()
+		local filetype = vim.bo.filetype
+		local filetype_opts = config_opts[filetype]
+		local smart_editing_opts = filetype_opts.smart_editing
+		smart_editing.start(smart_editing_opts)
 	end,
 })
 

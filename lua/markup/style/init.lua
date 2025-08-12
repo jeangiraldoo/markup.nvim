@@ -1,23 +1,24 @@
-local config_opts = require("markup.opts")
 local modes = require("markup.style.modes")
 local utils = require("markup.style.utils")
 
 ---Applies a text style either to a visual mode range or at the cursor in normal mode
----@param style string Name of the style to apply (e.g., "bold", "italic")
----@param range? { start_line: integer, start_col: integer, end_line: integer, end_col: integer }
----Optional range of text to apply the style to
----If omitted, the style is applied in normal mode at the current cursor position
----@return nil
-return function(style, range)
-	local filetype = vim.bo.filetype
-	local filetype_opts = (config_opts[filetype] or {}).style
+---
+---@param style_data table A table containing:
+---   - opts table: Style options for the current filetype
+---   - style string: Name of the style to apply (e.g., "bold", "italic")
+---   - range? { start_line: integer, start_col: integer, end_line: integer, end_col: integer }
+---     If omitted, the style is applied at the current cursor position in normal mode.
+---
+--- @return nil
+return function(style_data)
+	local opts, style, range = style_data.opts, style_data.style, style_data.range
 
-	if not filetype_opts then
-		vim.notify("No style options detected for " .. filetype, vim.log.levels.WARN)
+	if not opts then
+		vim.notify("No style options detected for " .. vim.bo.filetype, vim.log.levels.WARN)
 		return
 	end
 
-	local pattern = filetype_opts[style]
+	local pattern = opts[style]
 	if not pattern then
 		utils.notify_error("No style options found", style)
 		return
