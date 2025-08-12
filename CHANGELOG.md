@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/jeangiraldoo/markup.nvim/compare/v0.3.0...v0.4.0) (2025-08-12)
+
+
+### Features
+
+* add style commands to format words and visual selection ([bd21ba3](https://github.com/jeangiraldoo/markup.nvim/commit/bd21ba3af132f5ead152e9a12f124a45e8468484))
+
 ## [0.3.0](https://github.com/jeangiraldoo/markup.nvim/compare/v0.2.0...v0.3.0) (2025-08-10)
 
 
