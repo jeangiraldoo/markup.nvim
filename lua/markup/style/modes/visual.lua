@@ -20,7 +20,7 @@ end
 --- Get the text inside a visual selection along with the final end column
 ---@param range table 1-based selection range:
 ---    { start_line = int, start_col = int, end_line = int, end_col = int }
----@return string | nil selected_text, integer | nil end_col
+---@return string | nil selected_text, integer | nil end_col, boolean | nil is_single_line_selection
 local function get_visual_selection(range)
 	local start_line, start_col = range.start_line, range.start_col
 	local end_line, end_col = range.end_line, range.end_col
@@ -31,10 +31,10 @@ local function get_visual_selection(range)
 	local lines = vim.api.nvim_buf_get_lines(0, buf_start_idx, buf_end_idx, false)
 
 	if vim.tbl_isempty(lines) then
-		return nil, nil
+		return nil, nil, nil
 	end
 
-	local selected_text, is_single_line_selection
+	local selected_text
 	local actual_end_col -- Ensure the end column doesn't exceed the actual line length
 
 	local is_single_line_selection = start_line == end_line
@@ -68,7 +68,7 @@ end
 ---@param range table Visual selection range { start_line, start_col, end_line, end_col }
 return function(style, pattern, range)
 	local selected_text, end_col, is_single_line_selection = get_visual_selection(range)
-	if not selected_text then
+	if not selected_text or is_single_line_selection == nil then
 		return
 	end
 
