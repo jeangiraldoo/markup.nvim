@@ -1,6 +1,6 @@
--- Options:
---   auto_capitalize_headings -> Automatically capitalize the first letter of headings
---   auto_continue_lists      -> Automatically continue list entries when pressing Enter on an empty line
+-- Smart editing options:
+--   auto_capitalize_headings (boolean) -> Automatically capitalize the first letter of headings
+--   auto_continue_lists (boolean)      -> Automatically continue list entries when pressing Enter on an empty line
 --
 -- Style options (each can be one of the following):
 --   - string: A format string with a '%s' placeholder for the text
@@ -19,8 +19,10 @@
 
 return {
 	markdown = {
-		auto_capitalize_headings = true,
-		auto_continue_lists = true,
+		smart_editing = {
+			auto_capitalize_headings = true,
+			auto_continue_lists = true,
+		},
 		style = {
 			bold = "**%s**",
 			italic = "_%s_",
@@ -37,8 +39,10 @@ return {
 		},
 	},
 	typst = {
-		auto_capitalize_headings = true,
-		auto_continue_lists = true,
+		smart_editing = {
+			auto_capitalize_headings = true,
+			auto_continue_lists = true,
+		},
 		style = {
 			bold = "*%s*",
 			italic = "_%s_",
@@ -55,8 +59,10 @@ return {
 		},
 	},
 	tex = {
-		auto_capitalize_headings = true,
-		auto_continue_lists = true,
+		smart_editing = {
+			auto_capitalize_headings = true,
+			auto_continue_lists = true,
+		},
 		style = {
 			bold = "\\textbf{%s}",
 			italic = "\\textit{%s}",
