@@ -37,8 +37,17 @@ take care of the little things for you.
   - LaTex
 
 - Automatically:
-  - Capitalizes the first letter of headings.
-  - Continues unordered lists.
+
+  - Capitalizes the first letter of headings
+  - Continues unordered lists
+
+- Format the word under the cursor or visual selection as:
+
+  - Bold
+  - Italic
+  - Bold + Italic
+  - Inline or multiline code block
+  - Inline or multiline quote block
 
 ## 📋 Requirements
 
@@ -77,26 +86,82 @@ use {
 
 Here are all the available configuration options and their defaults:
 
-```lua
+````lua
 -- Options:
---   auto_capitalize_headings → Automatically capitalize the first letter of headings
---   auto_continue_lists      → Automatically continue list entries when pressing Enter on an empty line
+--   auto_capitalize_headings -> Automatically capitalize the first letter of headings
+--   auto_continue_lists      -> Automatically continue list entries when pressing Enter
+--
+-- Style options (each can be one of the following):
+--   - string: A format string with a '%s' placeholder for the text
+--   - function: A function that takes the text and returns formatted text
+--   - table: A table defining separate formats, where keys map to either strings or functions as above
+--        The table can include:
+--          inline           -> Format for inline usage
+--          multiline        -> Format for multiline usage
+--          multiline_repeat -> (optional) A prefix string repeated on each line in multiline usage
+--
+--   bold       -> Bold style
+--   italic     -> Italic style
+--   bolditalic -> Combined bold and italic
+--   quote      -> Quoted text style
+--   code       -> Code block style
 
 return {
     markdown = {
         auto_capitalize_headings = true,
         auto_continue_lists = true,
+        style = {
+            bold = "**%s**",
+            italic = "_%s_",
+            bolditalic = "***%s***",
+            quote = {
+                inline = '"%s"',
+                multiline = "> %s",
+                multiline_repeat = "> ",
+            },
+            code = {
+                inline = "`%s`",
+                multiline = "```\n%s\n```",
+            },
+        },
     },
     typst = {
         auto_capitalize_headings = true,
         auto_continue_lists = true,
+        style = {
+            bold = "*%s*",
+            italic = "_%s_",
+            bolditalic = "_*%s*_",
+            quote = {
+                inline = '"%s"',
+                multiline = "> %s",
+                multiline_repeat = "> ",
+            },
+            code = {
+                inline = "`%s`",
+                multiline = "```\n%s\n```",
+            },
+        },
     },
-    tex = { -- Filetype used for Latex
+    tex = { -- Filetype used for LaTex
         auto_capitalize_headings = true,
         auto_continue_lists = true,
+        style = {
+            bold = "\\textbf{%s}",
+            italic = "\\textit{%s}",
+            bolditalic = "\\textbf{\\textit{%s}}",
+            quote = {
+                inline = "``%s''",
+                multiline = "\\begin{quote}\n%s\n\\end{quote}",
+            },
+            code = {
+                inline = "\\verb|%s|",
+                multiline = "\\begin{verbatim}\n%s\n\\end{verbatim}",
+            },
+        },
     },
 }
-```
+````
 
 ## 💻 Usage
 
