@@ -1,14 +1,14 @@
 local utils = {}
 
-local LOG_LEVELS = vim.log.levels
-
 ---Notify the user of an error in a standardized format
 ---@param message string Error message to display
 ---@param style string Style name (included in the notification for context)
 function utils.notify_error(message, style)
 	local filetype = vim.bo.filetype
 	local base_error = (" (%s - %s style)"):format(filetype, style)
-	vim.notify(message .. base_error, LOG_LEVELS.WARN)
+
+	local error_msg = message .. base_error
+	vim.notify(error_msg, vim.log.levels.ERROR)
 end
 
 ---Check whether the given option type is valid for pattern handling
@@ -19,22 +19,17 @@ local function _is_option_type_valid(opt)
 	return opt == "function" or opt == "string"
 end
 
---- Retrieve the correct custom mode pattern for inline or multiline styles
+---Retrieve the correct custom mode pattern for inline or multiline styles
 --- Falls back to notifying an error if no valid pattern is found
 --- If "multiline_repeat" is present and multiline mode is used, it prefixes each line
 ---
---- @param pattern table Table containing "inline" and/or "multiline" keys (and optionally "multiline_repeat")
---- @param is_singleline boolean True if inline mode, false if multiline
---- @param text string The original text to be processed
---- @param style string Style name for error context
---- @return string | function | nil mode_pattern The pattern or function to apply, or nil on error
+---@param pattern table Table containing "inline" and/or "multiline" keys (and optionally "multiline_repeat")
+---@param is_singleline boolean True if inline mode, false if multiline
+---@param text string The original text to be processed
+---@param style string Style name for error context
+---@return string | function | nil mode_pattern The pattern or function to apply, or nil on error
 local function _get_custom_mode_pattern(pattern, is_singleline, text, style)
-	local mode_name
-	if is_singleline then
-		mode_name = "inline"
-	else
-		mode_name = "multiline"
-	end
+	local mode_name = is_singleline and "inline" or "multiline"
 
 	if not pattern.multiline and not pattern.inline then
 		utils.notify_error("No custom mode patterns set", style)
@@ -48,14 +43,17 @@ local function _get_custom_mode_pattern(pattern, is_singleline, text, style)
 		return nil
 	end
 
-	if not is_singleline and pattern.multiline_repeat then
-		return pattern.multiline_repeat .. text:gsub("\n", "\n" .. pattern.multiline_repeat)
+	local should_prefix_lines = not is_singleline and pattern.multiline_repeat
+	if should_prefix_lines then
+		local line_prefix = pattern.multiline_repeat
+		local prefixed_text = text:gsub("\n", "\n" .. line_prefix)
+		return line_prefix .. prefixed_text
 	end
 
 	return mode_pattern
 end
 
---- Apply a pattern to a given text, handling different pattern types accordingly.
+---Apply a pattern to a given text, handling different pattern types accordingly.
 ---
 --- Behavior based on "pattern" type:
 --- - **table**: Retrieves the mode-specific pattern via "_get_custom_mode_pattern"
@@ -64,11 +62,11 @@ end
 ---
 --- Notifies an error for unsupported pattern types
 ---
---- @param text string The text to transform
---- @param is_singleline boolean Whether to treat the selection as a single line
---- @param pattern string|function|table Pattern definition to apply
---- @param style string Style name for error context
---- @return string | nil processed_text The processed text, or nil if unchanged or on error
+---@param text string The text to transform
+---@param is_singleline boolean Whether to treat the selection as a single line
+---@param pattern string|function|table Pattern definition to apply
+---@param style string Style name for error context
+---@return string | nil processed_text The processed text, or nil if unchanged or on error
 function utils.apply_pattern_to_text(text, is_singleline, pattern, style)
 	local current_pattern = pattern
 	if type(current_pattern) == "table" then
@@ -76,17 +74,19 @@ function utils.apply_pattern_to_text(text, is_singleline, pattern, style)
 	end
 
 	local pattern_type = type(current_pattern)
+
 	if pattern_type == "string" then
 		if text:match(current_pattern) then
 			return nil
 		end
 		return current_pattern:format(text)
-	elseif pattern_type == "function" then
-		return current_pattern(text)
-	else
-		utils.notify_error("Style option expected a function, string or table. Received " .. pattern_type, style)
-		return nil
 	end
+
+	if pattern_type == "function" then
+		return current_pattern(text)
+	end
+
+	utils.notify_error("Style option expected a function, string or table. Received " .. pattern_type, style)
 end
 
 return utils
