@@ -7,15 +7,15 @@ on:
       - main
     paths:
       - README.md
-      - doc/**
       - .github/workflows/panvimdoc.yaml
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  docs:
-    name: Update Vimdocs
+  update-docs:
+    name: Update vimdocs
     if: github.repository == 'jeangiraldoo/markup.nvim'
     runs-on: ubuntu-latest
     steps:
@@ -24,7 +24,7 @@ jobs:
       - name: Remove top line (README title)
         run: sed -i '1d' README.md
 
-      - name: Generate updated vimdocs
+      - name: Generate vimdocs
         uses: kdheepak/panvimdoc@v4.0.1
         with:
           vimdoc: markup
@@ -35,9 +35,14 @@ jobs:
           shiftheadinglevelby: 0
           incrementheadinglevelby: 0
 
-      - name: Create commit
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Restore README.md
+        run: |
+          git restore README.md
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
         with:
-          commit_message: "docs: update vimdocs"
-          branch: ${{ github.head_ref }}
-          file_pattern: doc/**
+          base: main # Target branch for the PR
+          branch: panvimdoc # Branch where the changes are committed
+          title: "docs: update vimdocs"
+          commit-message: "docs: update vimdocs"
