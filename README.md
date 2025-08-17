@@ -49,6 +49,14 @@ take care of the little things for you.
   - Inline or multiline code block
   - Inline or multiline quote block
 
+- Generates Lorem Ipsum placeholder text with configurable generation options. The supported text
+  types are:
+
+  - Words
+  - Sentences
+  - Paragraphs
+  - Optionally, use the native Lorem function of the markup language (e.g., Typst) as the generator
+
 ## 📋 Requirements
 
 - Neovim 0.10+
@@ -87,11 +95,12 @@ use {
 Here are all the available configuration options and their defaults:
 
 ````lua
--- Smart editing options:
+-- **Smart editing options**
 --   auto_capitalize_headings (boolean) -> Automatically capitalize the first letter of headings
 --   auto_continue_lists (boolean)      -> Automatically continue list entries when pressing Enter
 --
--- Style options (each can be one of the following):
+--
+-- **Style options** (each can be one of the following)
 --   - string: A format string with a '%s' placeholder for the text
 --   - function: A function that takes the text and returns formatted text
 --   - table: A table defining separate formats, where keys map to either strings or functions as above
@@ -105,6 +114,43 @@ Here are all the available configuration options and their defaults:
 --   bolditalic -> Combined bold and italic
 --   quote      -> Quoted text style
 --   code       -> Code block style
+--
+--
+-- **Lorem generation options**
+--
+-- Built-in generator for supported markup languages:
+--
+--   builtin_function_pattern (string) -> A format string representing a built-in function for generating
+--     Lorem text.
+--     Only used for inserting text via the native functions of the markup language.
+--
+--     Example: "#lorem(%s)" for Typst generates lorem text when provided a number.
+--
+-- Plugin generator options:
+--
+-- Common options (applies to word, sentence, and paragraph):
+--   default_item_number (number) -> Number of items inserted when no explicit number is supplied
+--                                   by the user
+--   random (boolean)             -> If true, words are selected randomly
+--   window_size (number)         -> Number of recent words to avoid repeating when generating randomly
+--   max_width (number)           -> Maximum width of a line
+--
+-- Word-specific options:
+--   (inherits all common options; no additional fields)
+--
+-- Sentence-specific options:
+--   minimum_length (number)      -> Minimum number of words per sentence
+--   maximum_length (number)      -> Maximum number of words per sentence
+--   max_commas (number)          -> Maximum number of commas allowed per sentence
+--   comma_chance (number)        -> Probability of a comma appearing after a word; range 0.0 to 1.0
+--
+-- Paragraph-specific options:
+--   sentence_number (number)         -> Number of sentences per paragraph
+--   minimum_sentence_length (number) -> Minimum number of words per sentence
+--   maximum_sentence_length (number) -> Maximum number of words per sentence
+--   max_sentence_commas (number)     -> Maximum number of commas allowed per sentence
+--   sentence_comma_chance (number)   -> Probability of a comma appearing after a word;
+--                                       range 0.0 to 1.0
 
 return {
     markdown = {
@@ -124,6 +170,35 @@ return {
             code = {
                 inline = "`%s`",
                 multiline = "```\n%s\n```",
+            },
+        },
+        lorem = {
+            word = {
+                default_item_number = 3,
+                random = true,
+                max_width = 80,
+                window_size = 3,
+            },
+            sentence = {
+                default_item_number = 1,
+                random = false,
+                window_size = 3,
+                max_width = 80,
+                minimum_length = 7,
+                maximum_length = 12,
+                max_commas = 2,
+                comma_chance = 0.2,
+            },
+            paragraph = {
+                default_item_number = 1,
+                random = true,
+                window_size = 3,
+                max_width = 80,
+                minimum_sentence_length = 7,
+                maximum_sentence_length = 12,
+                max_sentence_commas = 2,
+                sentence_comma_chance = 0.2,
+                sentence_number = 3,
             },
         },
     },
@@ -146,6 +221,36 @@ return {
                 multiline = "```\n%s\n```",
             },
         },
+        lorem = {
+			builtin_function_pattern = "#lorem(%s)",
+            word = {
+                default_item_number = 3,
+                random = true,
+                max_width = 80,
+                window_size = 3,
+            },
+            sentence = {
+                default_item_number = 1,
+                random = false,
+                window_size = 3,
+                max_width = 80,
+                minimum_length = 7,
+                maximum_length = 12,
+                max_commas = 2,
+                comma_chance = 0.2,
+            },
+            paragraph = {
+                default_item_number = 1,
+                random = true,
+                window_size = 3,
+                max_width = 80,
+                minimum_sentence_length = 7,
+                maximum_sentence_length = 12,
+                max_sentence_commas = 2,
+                sentence_comma_chance = 0.2,
+                sentence_number = 3,
+            },
+        },
     },
     tex = { -- Filetype used for LaTex
         smart_editing = {
@@ -163,6 +268,36 @@ return {
             code = {
                 inline = "\\verb|%s|",
                 multiline = "\\begin{verbatim}\n%s\n\\end{verbatim}",
+            },
+        },
+        lorem = {
+			builtin_function_pattern = "\\lipsum[%s]", -- Uses the lipsum package
+            word = {
+                default_item_number = 3,
+                random = true,
+                max_width = 80,
+                window_size = 3,
+            },
+            sentence = {
+                default_item_number = 1,
+                random = false,
+                window_size = 3,
+                max_width = 80,
+                minimum_length = 7,
+                maximum_length = 12,
+                max_commas = 2,
+                comma_chance = 0.2,
+            },
+            paragraph = {
+                default_item_number = 1,
+                random = true,
+                window_size = 3,
+                max_width = 80,
+                minimum_sentence_length = 7,
+                maximum_sentence_length = 12,
+                max_sentence_commas = 2,
+                sentence_comma_chance = 0.2,
+                sentence_number = 3,
             },
         },
     },

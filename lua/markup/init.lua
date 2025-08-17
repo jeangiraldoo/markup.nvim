@@ -2,6 +2,7 @@ local default_opts = require("markup.opts")
 
 local SUBCMDS = {
 	"style",
+	"lorem",
 }
 
 local M = {}
@@ -74,6 +75,7 @@ vim.api.nvim_create_user_command("Markup", function(opts)
 		choice = subcmd_args[1],
 		opts = filetype_opts[subcmd],
 		range = get_visual_range(opts),
+		args = { unpack(subcmd_args, 2) },
 	}
 
 	local component_path = "markup." .. subcmd
