@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/jeangiraldoo/markup.nvim/compare/v0.4.0...v0.5.0) (2025-08-17)
+
+
+### Features
+
+* add configurable Lorem Ipsum text generation ([#10](https://github.com/jeangiraldoo/markup.nvim/issues/10)) ([d6c8102](https://github.com/jeangiraldoo/markup.nvim/commit/d6c8102c9ed3f71d88ae3096104172ffeed1c001))
+
 ## [0.4.0](https://github.com/jeangiraldoo/markup.nvim/compare/v0.3.0...v0.4.0) (2025-08-12)
 
 
